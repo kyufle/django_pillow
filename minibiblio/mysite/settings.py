@@ -26,11 +26,13 @@ SECRET_KEY = 'django-insecure-9dc(69hg)8(stt5!jsxsww$5bxu-gp*$55m4m9ipsmwh6!^og9
 DEBUG = True
 
 ALLOWED_HOSTS = []
+AUTH_USER_MODEL='minibiblio.Usuari'
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'minibiblio.apps.MinibiblioConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

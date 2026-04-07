@@ -7,9 +7,11 @@ cd php/django-pillow
 ```bash
 source pillow/bin/activate
 ```
-
 ## Startapp
 ```bash
 ./manage.py startapp minibiblio
 ```
-
+## Hacer que corra la aplicación
+```bash
+./manage.py runserver
+```
