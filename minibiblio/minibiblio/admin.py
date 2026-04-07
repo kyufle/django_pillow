@@ -31,7 +31,7 @@ class LlibreAdmin(admin.ModelAdmin):
         if not obj or not obj.pk:
             return "Guarda el llibre per veure la galeria."
 
-        html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; background: #f0f0f0; padding: 15px; border-radius: 8px;">'
+        html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; border-radius: 8px;">'
         if obj.imatge:
             html += format_html(
                 '<div style="text-align: center;">'
@@ -46,7 +46,7 @@ class LlibreAdmin(admin.ModelAdmin):
                 html += format_html(
                     '<div style="text-align: center;">'
                     '<p style="font-size: 10px; color: #666;">{}</p>'
-                    '<img src="{}" width="150" height="150" style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />'
+                    '<img src="{}" width="180" height="180" style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />'
                     '</div>', 
                     img_obj.descripcio or "Galeria",
                     img_obj.imatge.url
