@@ -5,58 +5,67 @@ from .models import Llibre, ImatgeLlibre, Usuari
 class ImatgeLlibreInline(admin.TabularInline):
     model = ImatgeLlibre
     extra = 1
-    fields = ('imatge', 'preview', 'descripcio')
-    readonly_fields = ('preview',)
+    fields = ('imatge', 'preview_inline', 'descripcio')
+    readonly_fields = ('preview_inline',)
 
-    def preview(self, obj):
+    def preview_inline(self, obj):
         if obj and obj.imatge:
-            return format_html('<img src="{}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;" />', obj.imatge.url)
-        return "Sense imatge"
-    
-    preview.short_description = 'Miniatura'
+            return format_html('<img src="{}" style="height: 50px; border-radius: 4px;" />', obj.imatge.url)
+        return ""
+    preview_inline.short_description = 'Vista prèvia'
 
 class LlibreAdmin(admin.ModelAdmin):
-    list_display = ('titol', 'autor', 'data_edicio')
+    list_display = ('titol', 'mini_galeria_llistat')
     inlines = [ImatgeLlibreInline]
-    readonly_fields = ('portada_actual', 'ver_galeria_completa')
-    
-    fields = ('titol', 'autor', 'resum', 'data_edicio', 'imatge', 'portada_actual', 'ver_galeria_completa')
-    
-    def portada_actual(self, obj):
-        if obj and obj.imatge:
-            return format_html('<img src="{}" style="width: 150px; border: 1px solid #ccc; border-radius: 8px;" />', obj.imatge.url)
-        return "No hi ha portada"
+    readonly_fields = ('ver_galeria_completa',)
+    fields = ('titol', 'autor', 'resum', 'data_edicio', 'imatge', 'ver_galeria_completa')
+
+    def mini_galeria_llistat(self, obj):
+        html = '<div style="display: flex; gap: 4px;">'
+        if obj.imatge:
+            html += format_html('<img src="{}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 3px; border: 1px solid #79aec8;" />', obj.imatge.url)
+        
+        for img_obj in obj.galeria.all()[:3]:
+            html += format_html('<img src="{}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 3px; border: 1px solid #ccc;" />', img_obj.imatge.url)
+        
+        html += '</div>'
+        return format_html(html)
+    mini_galeria_llistat.short_description = 'Galeria'
 
     def ver_galeria_completa(self, obj):
         if not obj or not obj.pk:
-            return "Guarda el llibre per veure la galeria."
+            return "Guarda el llibre per veure la galeria completa."
 
-        html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; padding: 15px; border-radius: 8px;">'
+        html = '<div style="display: flex; flex-wrap: wrap; gap: 10px; background: #f8f8f8; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">'
+        
         if obj.imatge:
             html += format_html(
                 '<div style="text-align: center;">'
                 '<p><b>Portada</b></p>'
-                '<img src="{}" width="150" style="border: 2px solid #79aec8; border-radius: 4px;" />'
+                '<img src="{}" width="180" style="object-fit: cover; border: 2px solid #79aec8; border-radius: 4px;" />'
                 '</div>', 
                 obj.imatge.url
             )
-
-        for img_obj in obj.galeria.all():
-            if img_obj.imatge:
-                html += format_html(
-                    '<div style="text-align: center;">'
-                    '<p style="font-size: 10px; color: #666;">{}</p>'
-                    '<img src="{}" width="180" height="180" style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />'
-                    '</div>', 
-                    img_obj.descripcio or "Galeria",
-                    img_obj.imatge.url
-                )
         
+        imagenes_galeria = obj.galeria.all()
+        if imagenes_galeria.exists():
+            for img_obj in imagenes_galeria:
+                if img_obj.imatge:
+                    html += format_html(
+                        '<div style="text-align: center;">'
+                        '<p style="font-size: 10px; color: #666;">Galería</p>'
+                        '<img src="{}" width="200" height="200" style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;" />'
+                        '</div>', 
+                        img_obj.imatge.url
+                    )
+        else:
+            if not obj.imatge:
+                return "Encara no hi ha cap imatge pujada."
+                
         html += '</div>'
         return format_html(html)
     
-    portada_actual.short_description = 'Vista prèvia portada'
-    ver_galeria_completa.short_description = 'Àlbum de fotos'
+    ver_galeria_completa.short_description = 'Àlbum de fotos del llibre'
 
 admin.site.register(Llibre, LlibreAdmin)
 admin.site.register(Usuari)
