@@ -1,6 +1,20 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from .models import Llibre, ImatgeLlibre, Usuari
+
+# --- CONFIGURACIÓN DE USUARIO ---
+
+class UsuariAdmin(UserAdmin):
+    # Añadimos el campo auth_token a los fieldsets existentes de Django UserAdmin
+    fieldsets = UserAdmin.fieldsets + (
+        ("Altres dades (API auth)", {
+            'fields': ('auth_token',),
+        }),
+    )
+    readonly_fields = ["auth_token",]
+
+# --- CONFIGURACIÓN DE IMÁGENES (INLINE) ---
 
 class ImatgeLlibreInline(admin.TabularInline):
     model = ImatgeLlibre
@@ -13,6 +27,8 @@ class ImatgeLlibreInline(admin.TabularInline):
             return format_html('<img src="{}" style="height: 50px; border-radius: 4px;" />', obj.imatge.url)
         return ""
     preview_inline.short_description = 'Vista prèvia'
+
+# --- CONFIGURACIÓN DE LIBROS ---
 
 class LlibreAdmin(admin.ModelAdmin):
     list_display = ('titol', 'mini_galeria_llistat')
@@ -67,5 +83,7 @@ class LlibreAdmin(admin.ModelAdmin):
     
     ver_galeria_completa.short_description = 'Àlbum de fotos del llibre'
 
+# --- REGISTRO DE MODELOS ---
+
 admin.site.register(Llibre, LlibreAdmin)
-admin.site.register(Usuari)
+admin.site.register(Usuari, UsuariAdmin)
