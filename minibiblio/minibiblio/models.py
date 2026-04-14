@@ -9,15 +9,12 @@ class Llibre(models.Model):
     imatge = models.ImageField(upload_to='llibres/', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.titol} ({self.autor})"
+        return self.titol
 
 class ImatgeLlibre(models.Model):
     llibre = models.ForeignKey(Llibre, on_delete=models.CASCADE, related_name='galeria')
     imatge = models.ImageField(upload_to='llibres/galeria/')
     descripcio = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return f"Imatge de {self.llibre.titol}"
 
 class Usuari(AbstractUser):
     auth_token = models.CharField(max_length=32, blank=True, null=True)
