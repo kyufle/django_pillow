@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
+import CONFIG from '../config';
 
 const BookItem = ({ llibre }) => {
     const [showDetails, setShowDetails] = useState(false);
     
-    // URL base de tu servidor Django
-    const API_BASE_URL = 'http://localhost:8000';
-
     const toggleDetails = () => setShowDetails(!showDetails);
-
-    // Función para limpiar las URLs que vienen de Django
     const getFullUrl = (path) => {
         if (!path) return null;
         if (path.startsWith('http')) return path;
-        return `${API_BASE_URL}${path}`;
+        const domain = CONFIG.API_BASE_URL.replace('/api', '');
+        return `${domain}${path}`;
     };
 
     return (
@@ -35,7 +32,8 @@ const BookItem = ({ llibre }) => {
                     border: 'none',
                     padding: '8px 15px',
                     borderRadius: '5px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    marginTop: '10px'
                 }}
             >
                 {showDetails ? 'Ocultar detalles' : 'Ver descripción y fotos'}
@@ -45,33 +43,14 @@ const BookItem = ({ llibre }) => {
                 <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
                     <p><strong>Fecha edición:</strong> {llibre.data_edicio}</p>
                     <p><strong>Resumen:</strong> {llibre.resum || 'Sin descripción.'}</p>
-
-                    {/* IMAGEN PRINCIPAL (Campo 'imatge' en tu modelo) */}
                     {llibre.imatge && (
                         <div style={{ marginBottom: '20px' }}>
                             <h4>Portada:</h4>
                             <img 
                                 src={getFullUrl(llibre.imatge)} 
-                                alt="Portada" 
-                                style={{ maxWidth: '200px', borderRadius: '8px' }} 
+                                alt={llibre.titol} 
+                                style={{ maxWidth: '250px', borderRadius: '8px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} 
                             />
-                        </div>
-                    )}
-
-                    {/* GALERÍA (Si tu API devuelve el related_name 'galeria') */}
-                    {llibre.galeria && llibre.galeria.length > 0 && (
-                        <div>
-                            <h4>Galería de fotos:</h4>
-                            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                                {llibre.galeria.map((imgObj, index) => (
-                                    <img 
-                                        key={index}
-                                        src={getFullUrl(imgObj.imatge)} 
-                                        alt={imgObj.descripcio || 'Imagen galería'}
-                                        style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '5px' }}
-                                    />
-                                ))}
-                            </div>
                         </div>
                     )}
                 </div>
