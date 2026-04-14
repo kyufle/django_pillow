@@ -24,7 +24,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', # Importante: Arriba del todo
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -39,13 +39,11 @@ ROOT_URLCONF = 'mysite.urls'
 DATABASES = {
     'default': env.db(default=f'sqlite:///{os.path.join(BASE_DIR, "db.sqlite3")}')
 }
-
-# Configuración de archivos estáticos y MEDIA
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Configuración de CORS para desarrollo
 CORS_ALLOW_ALL_ORIGINS = True 
 
 LANGUAGE_CODE = 'es-es'
